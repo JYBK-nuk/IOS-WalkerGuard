@@ -21,6 +21,7 @@
 		26F909B928F3127200F0E537 /* yolov7-tiny.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 26F909B828F3127200F0E537 /* yolov7-tiny.mlmodel */; };
 		7843DA482B40AB5F00027B27 /* yolov8.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 7843DA472B40AB5F00027B27 /* yolov8.mlmodel */; };
 		7843DA4A2B40E3F900027B27 /* CropPlate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7843DA492B40E3F900027B27 /* CropPlate.swift */; };
+		78AAEF802B41FC7800EC52CF /* Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78AAEF7F2B41FC7800EC52CF /* Service.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -39,6 +40,7 @@
 		26F909B828F3127200F0E537 /* yolov7-tiny.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = "yolov7-tiny.mlmodel"; sourceTree = "<group>"; };
 		7843DA472B40AB5F00027B27 /* yolov8.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = yolov8.mlmodel; sourceTree = "<group>"; };
 		7843DA492B40E3F900027B27 /* CropPlate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CropPlate.swift; sourceTree = "<group>"; };
+		78AAEF7F2B41FC7800EC52CF /* Service.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Service.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -78,6 +80,7 @@
 				26F909A028F30A3400F0E537 /* DataModel.swift */,
 				264CC8F228D0147F0010636F /* NQ_DetectApp.swift */,
 				264CC8F628D0147F0010636F /* Assets.xcassets */,
+				78AAEF7F2B41FC7800EC52CF /* Service.swift */,
 				264CC8F828D0147F0010636F /* Preview Content */,
 			);
 			path = WalkerGuard2;
@@ -193,6 +196,7 @@
 				26F9099A28F309BE00F0E537 /* Labeling.swift in Sources */,
 				26F909B128F30A3400F0E537 /* CameraView.swift in Sources */,
 				26F909AE28F30A3400F0E537 /* DataModel.swift in Sources */,
+				78AAEF802B41FC7800EC52CF /* Service.swift in Sources */,
 				26F909AF28F30A3400F0E537 /* PhotoView.swift in Sources */,
 				26872DF228D15979000B1DD8 /* ObjectDetection.swift in Sources */,
 				264CC8F328D0147F0010636F /* NQ_DetectApp.swift in Sources */,
