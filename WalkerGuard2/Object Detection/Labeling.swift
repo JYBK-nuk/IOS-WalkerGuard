@@ -11,7 +11,7 @@ import SwiftUI
 class Labeling{
     
     private var labelColors: [String: CGColor] = [:]
-    
+    var labels = ["Car","Motor","Plate"]
     
     init(){
         self.labelColors = self.generateLabelColors()
@@ -24,9 +24,14 @@ class Labeling{
         image.draw(at: CGPoint.zero)
         // Get the current context
         let context = UIGraphicsGetCurrentContext()!
-        
+        // print(context)
         
         for observation in observations{
+            // check if label is in labelColors
+            if labelColors[observation.label] == nil{
+                labels.append(observation.label)
+                self.labelColors = self.generateLabelColors()
+            }
             let labelColor = labelColors[observation.label]!
             let label = observation.label + " " + String(format:"%.1f",observation.confidence*100)+"%"
             let boundingBox = observation.boundingBox
@@ -79,12 +84,11 @@ class Labeling{
         
     }
     
-    let labels = ["Car","Motor","Plate"]
-    
+ 
     func generateLabelColors() -> [String: CGColor] {
         var labelColor: [String: CGColor] = [:]
         
-        for i in 0...2 {
+        for i in 0...self.labels.count-1 {
             let color = UIColor(red: CGFloat.random(in: 0...1), green: CGFloat.random(in: 0...1), blue: CGFloat.random(in: 0...1), alpha: 1)
             labelColor[self.labels[i]] = color.cgColor
         }

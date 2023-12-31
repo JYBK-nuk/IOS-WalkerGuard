@@ -11,13 +11,14 @@ class ObjectDetection{
     var detectionRequest:VNCoreMLRequest!
     var ready = false
     
+    
     init(){
         Task { self.initDetection() }
     }
     
     func initDetection(){
         do {
-            let model = try VNCoreMLModel(for: yolov8(configuration: MLModelConfiguration()).model)
+            let model = try VNCoreMLModel(for: yolov7_tiny(configuration: MLModelConfiguration()).model)
             
             self.detectionRequest = VNCoreMLRequest(model: model)
             
@@ -29,7 +30,6 @@ class ObjectDetection{
     }
     
     func detectAndProcess(image:CIImage)-> [ProcessedObservation]{
-        
         let observations = self.detect(image: image)
         
         let processedObservations = self.processObservation(observations: observations, viewSize: image.extent.size)
