@@ -13,7 +13,7 @@ struct CameraView: View {
     
     @State private var isImageTaken = false
     
-    @State private var speed = 50.0
+    @State private var speed = 15.0
     @State private var isEditing = false
     
     

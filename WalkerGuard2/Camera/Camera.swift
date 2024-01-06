@@ -142,7 +142,7 @@ class Camera: NSObject {
             return
         }
         
-        self.setShutterSpeed(self.captureDevice!, self.shutterSpeed ?? (1,500))
+        self.setShutterSpeed(self.captureDevice!, self.shutterSpeed ?? (1,16))
         
         let photoOutput = AVCapturePhotoOutput()
         

@@ -18,7 +18,7 @@ class ObjectDetection{
     
     func initDetection(){
         do {
-            let model = try VNCoreMLModel(for: yolov7_tiny(configuration: MLModelConfiguration()).model)
+            let model = try VNCoreMLModel(for: yolov8(configuration: MLModelConfiguration()).model)
             
             self.detectionRequest = VNCoreMLRequest(model: model)
             

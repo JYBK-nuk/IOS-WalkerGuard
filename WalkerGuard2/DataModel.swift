@@ -6,7 +6,7 @@ final class DataModel: NSObject,ObservableObject {
     var detector = ObjectDetection()
     var labeler = Labeling()
     var observations : [ProcessedObservation] = []
-    var previewSize:CGSize = CGSize(width: 0, height: 0)
+    var cropImages: [UIImage] = []
     @Published var viewfinderImage: Image?
     @Published var thumbnailImage: Image?
     
@@ -17,78 +17,34 @@ final class DataModel: NSObject,ObservableObject {
         Task {
             await handleCameraPreviews()
         }
-        
-        Task {
-            await handleCameraPhotos()
-        }
     }
     
     func handleCameraPreviews() async {
         let imageStream = camera.previewStream
             .map { $0 }
         for await image in imageStream {
-            
-
+            let uiImage = UIImage(ciImage: image)
             Task { @MainActor in
-                self.previewSize = image.extent.size
                 if !self.detector.ready {
-                    self.viewfinderImage = image.image
                     return
                 }
-                let newObservations = self.detector.detectAndProcess(image: image)
-                self.observations = newObservations
-                
+                self.observations = self.detector.detectAndProcess(image: image)
+            }
+
+            Task { @MainActor in
                 self.camera.isPreviewPaused = false
-                let labeledImage = self.labeler.labelImage(image: UIImage(ciImage: image), observations: self.observations)!
+                let labeledImage = self.labeler.labelImage(image: uiImage, observations: self.observations)!
                 self.viewfinderImage = Image(uiImage: labeledImage)
                 self.camera.isPreviewPaused = false
                 
+                print("cropImages = \(self.cropImages)")
             }
+//            Task {
+//                self.cropImages = CropPlate.CropPlates(image: uiImage, observations: self.observations)
+//            }
         }
     }
     
-    func handleCameraPhotos() async {
-        let unpackedPhotoStream = camera.photoStream
-            .compactMap { self.unpackPhoto($0) }
-        
-        for await photoData in unpackedPhotoStream {
-            Task { @MainActor in
-                thumbnailImage = photoData.first?.thumbnailImage
-            }
-            for photoData in photoData {
-                savePhoto(imageData: photoData.imageData)
-            }
-        }
-    }
-    
-    private func unpackPhoto(_ photo: AVCapturePhoto) -> [PhotoData]? {
-        if !self.detector.ready { return nil}
-        guard let imageData = photo.fileDataRepresentation() else { return nil }
-        
-        guard let detImage = CIImage(data: imageData,options: [.applyOrientationProperty:true]) else {return nil}
-        guard let cgImage = photo.cgImageRepresentation() else { return nil }
-        // hashmap to store base64
-        
-        
-        
-        
-        self.observations = self.detector.detectAndProcess(image: detImage)
-        
-        let labeledImage = labeler.labelImage(image: UIImage(ciImage: detImage), observations: self.observations)!
-        
-        let croppedImages = CropPlate.CropPlates(image: cgImage, observations: self.observations,viewSize: self.previewSize)
-        
-        let thumbnailImage = Image(uiImage: labeledImage)
-        var photoDataArray: [PhotoData] = []
-
-        for croppedImage in croppedImages ?? [] {
-            let photoData = PhotoData(thumbnailImage: thumbnailImage, imageData: croppedImage)
-            photoDataArray.append(photoData)
-        }
-
-        return photoDataArray
-
-    }
 
     
     func savePhoto(imageData: UIImage) {
