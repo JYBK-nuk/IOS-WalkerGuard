@@ -3,28 +3,34 @@ import SwiftUI
 import CoreGraphics
 import Vision
 class CropPlate {
-    static func CropPlates(image: UIImage, observations: [ProcessedObservation]) -> [UIImage] {
+    static func CropPlates(image: UIImage, observations: [ProcessedObservation]) -> ([UIImage],[[Int]]) {
         UIGraphicsBeginImageContext(image.size)
         image.draw(at: CGPoint.zero)
-        let context = UIGraphicsGetCurrentContext()!
+        _ = UIGraphicsGetCurrentContext()!
         
         var croppedImages: [UIImage] = []
-        
+        var positions : [[Int]] = []
         for observation in observations {
-            // 在這裡執行對每個observation的圖像裁剪操作
-            
-            // cropImage是裁剪後的圖像
-            if let cropImage = cropImage(image: image, observation: observation) {
-                croppedImages.append(cropImage)
+            // if observation is plate
+            if observation.label == "Plate" {
+                // cropImage是裁剪後的圖像
+                if let cropImage = cropImage(image: image, observation: observation) {
+                    croppedImages.append(cropImage)
+                    positions.append([
+                        Int(observation.boundingBox.midX),
+                        Int(observation.boundingBox.maxY)
+                    ])
+                }
             }
+            
         }
         
         UIGraphicsEndImageContext()
         
-        print("croppedImages.count = \(croppedImages.count)")
+        //        print("croppedImages.count = \(croppedImages.count)")
         
         // 假設你想要回傳第一張裁剪後的圖像
-        return croppedImages
+        return (croppedImages,positions)
     }
     static func convertCIImageToCGImage(inputImage: CIImage) -> CGImage? {
         let context = CIContext(options: nil)
@@ -41,9 +47,6 @@ class CropPlate {
         let boundingBox = observation.boundingBox
         // 將bounding box轉換為圖像座標
         let imageSize = image.size
-        print("imageSize = \(imageSize)")
-        print("boundingBox = \(boundingBox)")
-        print(image)
         let cgiImage = convertCIImageToCGImage(inputImage: image.ciImage!)
         // 從原始圖像中裁剪出指定的區域
         guard let imageRef = cgiImage?.cropping(to: boundingBox) else {

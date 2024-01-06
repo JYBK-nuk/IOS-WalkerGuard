@@ -4,6 +4,7 @@ import SwiftUI
 final class DataModel: NSObject,ObservableObject {
     var camera = Camera()
     var detector = ObjectDetection()
+    private var service = Service()
     var labeler = Labeling()
     var observations : [ProcessedObservation] = []
     var cropImages: [UIImage] = []
@@ -11,9 +12,10 @@ final class DataModel: NSObject,ObservableObject {
     @Published var thumbnailImage: Image?
     
     var isPhotosLoaded = false
-    
+    var done = true
     override init() {
         super.init()
+        
         Task {
             await handleCameraPreviews()
         }
@@ -22,44 +24,55 @@ final class DataModel: NSObject,ObservableObject {
     func handleCameraPreviews() async {
         let imageStream = camera.previewStream
             .map { $0 }
+        
         for await image in imageStream {
-            let uiImage = UIImage(ciImage: image)
+            
             Task { @MainActor in
                 if !self.detector.ready {
                     return
                 }
+                self.camera.isPreviewPaused = true
                 self.observations = self.detector.detectAndProcess(image: image)
+                self.camera.isPreviewPaused = false
             }
-
+            
             Task { @MainActor in
-                self.camera.isPreviewPaused = false
-                let labeledImage = self.labeler.labelImage(image: uiImage, observations: self.observations)!
-                self.viewfinderImage = Image(uiImage: labeledImage)
-                self.camera.isPreviewPaused = false
-                
-                print("cropImages = \(self.cropImages)")
+                if done{
+                    done = false
+                    let uiImage = UIImage(ciImage: image)
+                    // time sleep 1s
+                    
+                    let labeledImage = self.labeler.labelImage(image: uiImage, observations: self.observations)!
+                    self.viewfinderImage = Image(uiImage: labeledImage)
+                    done = true
+                }
             }
-//            Task {
-//                self.cropImages = CropPlate.CropPlates(image: uiImage, observations: self.observations)
-//            }
+            Task {
+                let uiImage = UIImage(ciImage: image)
+                var positions = [[Int]]()
+                (self.cropImages,positions) = CropPlate.CropPlates(image: uiImage, observations: self.observations)
+                if self.cropImages.count > 0{
+                    service.addPlates(images: self.cropImages, positions: positions)
+                }
+            }
         }
     }
     
-
+    
     
     func savePhoto(imageData: UIImage) {
         Task {
             /// Save `image` into Photo Library
-             UIImageWriteToSavedPhotosAlbum(imageData, self,
-                 #selector(image(_:didFinishSavingWithError:contextInfo:)), nil)
-
+            UIImageWriteToSavedPhotosAlbum(imageData, self,
+                                           #selector(image(_:didFinishSavingWithError:contextInfo:)), nil)
+            
         }
     }
-
+    
     
     /// Process photo saving result
     @objc func image(_ image: UIImage,
-        didFinishSavingWithError error: Error?, contextInfo: UnsafeRawPointer) {
+                     didFinishSavingWithError error: Error?, contextInfo: UnsafeRawPointer) {
         if let error = error {
             print("ERROR: \(error)")
             
@@ -82,7 +95,7 @@ fileprivate extension CIImage {
 }
 
 fileprivate extension Image.Orientation {
-
+    
     init(_ cgImageOrientation: CGImagePropertyOrientation) {
         switch cgImageOrientation {
         case .up: self = .up

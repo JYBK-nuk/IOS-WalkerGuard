@@ -9,6 +9,7 @@ import AVFoundation
 struct CameraView: View {
     @StateObject private var model = DataModel()
     
+    
     private static let barHeightFactor = 0.10
     
     @State private var isImageTaken = false

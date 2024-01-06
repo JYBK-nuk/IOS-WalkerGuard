@@ -21,12 +21,12 @@
 		26F909B928F3127200F0E537 /* yolov7-tiny.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 26F909B828F3127200F0E537 /* yolov7-tiny.mlmodel */; };
 		7843DA482B40AB5F00027B27 /* yolov8.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 7843DA472B40AB5F00027B27 /* yolov8.mlmodel */; };
 		7843DA4A2B40E3F900027B27 /* CropPlate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7843DA492B40E3F900027B27 /* CropPlate.swift */; };
+		784570BB2B496C210017B69E /* Starscream in Frameworks */ = {isa = PBXBuildFile; productRef = 784570BA2B496C210017B69E /* Starscream */; };
 		78AAEF802B41FC7800EC52CF /* Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78AAEF7F2B41FC7800EC52CF /* Service.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		26162B9628E74F5100BFF60B /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = SOURCE_ROOT; };
-		264CC8EF28D0147F0010636F /* WalkerGuard2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WalkerGuard2.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		264CC8F228D0147F0010636F /* NQ_DetectApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NQ_DetectApp.swift; sourceTree = "<group>"; };
 		264CC8F628D0147F0010636F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		264CC8F928D0147F0010636F /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
@@ -40,6 +40,7 @@
 		26F909B828F3127200F0E537 /* yolov7-tiny.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = "yolov7-tiny.mlmodel"; sourceTree = "<group>"; };
 		7843DA472B40AB5F00027B27 /* yolov8.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = yolov8.mlmodel; sourceTree = "<group>"; };
 		7843DA492B40E3F900027B27 /* CropPlate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CropPlate.swift; sourceTree = "<group>"; };
+		78AA5FE32B496FEA0082C949 /* WalkerGuard2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WalkerGuard2.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		78AAEF7F2B41FC7800EC52CF /* Service.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Service.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -48,6 +49,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				784570BB2B496C210017B69E /* Starscream in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -58,16 +60,8 @@
 			isa = PBXGroup;
 			children = (
 				264CC8F128D0147F0010636F /* WalkerGuard2 */,
-				264CC8F028D0147F0010636F /* Products */,
+				78AA5FE32B496FEA0082C949 /* WalkerGuard2.app */,
 			);
-			sourceTree = "<group>";
-		};
-		264CC8F028D0147F0010636F /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				264CC8EF28D0147F0010636F /* WalkerGuard2.app */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		264CC8F128D0147F0010636F /* WalkerGuard2 */ = {
@@ -133,9 +127,10 @@
 			);
 			name = WalkerGuard2;
 			packageProductDependencies = (
+				784570BA2B496C210017B69E /* Starscream */,
 			);
 			productName = "coreml-object-detection";
-			productReference = 264CC8EF28D0147F0010636F /* WalkerGuard2.app */;
+			productReference = 78AA5FE32B496FEA0082C949 /* WalkerGuard2.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -163,8 +158,9 @@
 			);
 			mainGroup = 264CC8E628D0147F0010636F;
 			packageReferences = (
+				784570B92B496C210017B69E /* XCRemoteSwiftPackageReference "Starscream" */,
 			);
-			productRefGroup = 264CC8F028D0147F0010636F /* Products */;
+			productRefGroup = 264CC8E628D0147F0010636F;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -425,6 +421,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		784570B92B496C210017B69E /* XCRemoteSwiftPackageReference "Starscream" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/daltoniam/Starscream.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.0.6;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		784570BA2B496C210017B69E /* Starscream */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 784570B92B496C210017B69E /* XCRemoteSwiftPackageReference "Starscream" */;
+			productName = Starscream;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 264CC8E728D0147F0010636F /* Project object */;
 }
