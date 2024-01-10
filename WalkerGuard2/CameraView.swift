@@ -16,10 +16,19 @@ struct CameraView: View {
     
     @State private var speed = 15.0
     @State private var isEditing = false
-    
+    static var topSafeArea: CGFloat {
+        let keyWindow = UIApplication.shared.connectedScenes
+            .filter({$0.activationState == .foregroundActive})
+            .map({$0 as? UIWindowScene})
+            .compactMap({$0})
+            .first?.windows
+            .filter({$0.isKeyWindow}).first
+        
+        return (keyWindow?.safeAreaInsets.top) ?? 0
+    }
     
     var body: some View {
-        
+    
         NavigationView {
             GeometryReader { geometry in
                 ViewfinderView(image:  $model.viewfinderImage )
@@ -38,6 +47,18 @@ struct CameraView: View {
                             .accessibilityLabel("View Finder")
                             .accessibilityAddTraits([.isImage])
                     }
+                    .overlay(alignment:.top){
+                        VStack {
+                            Button {
+                                model.service.reconnect()
+                            } label: {
+                                Label("Reconnect", systemImage: "arrow.triangle.2.circlepath")
+                                    .font(.system(size: 15, weight: .bold))
+                                    .foregroundColor(.white)
+                            }
+                            .padding(.top, CameraView.topSafeArea + 20)
+                        }
+                    }
                     .background(.black)
             }
             .task {
@@ -48,19 +69,19 @@ struct CameraView: View {
             .navigationBarHidden(true)
             .ignoresSafeArea()
             .statusBar(hidden: true)
-            .sheet(isPresented: self.$isImageTaken) {
-                PhotoView(image: $model.thumbnailImage).onAppear(){
-                    model.camera.isPreviewPaused = true
-                }.onDisappear(){
-                    model.camera.isPreviewPaused = false
-                    model.thumbnailImage = nil
-                    
-                }
-            }.onAppear(){
-                UIApplication.shared.isIdleTimerDisabled = true
-            }.onDisappear(){
-                UIApplication.shared.isIdleTimerDisabled = false
-            }
+//            .sheet(isPresented: self.$isImageTaken) {
+//                PhotoView(image: $model.thumbnailImage).onAppear(){
+//                    model.camera.isPreviewPaused = true
+//                }.onDisappear(){
+//                    model.camera.isPreviewPaused = false
+//                    model.thumbnailImage = nil
+//                    
+//                }
+//            }.onAppear(){
+//                UIApplication.shared.isIdleTimerDisabled = true
+//            }.onDisappear(){
+//                UIApplication.shared.isIdleTimerDisabled = false
+//            }
             
         }
     }
@@ -89,8 +110,8 @@ struct CameraView: View {
                     }
                 }
                 Button {
-                    model.camera.takePhoto()
-                    self.isImageTaken.toggle()
+                    model.service.sendNewestPlate()
+//                    self.isImageTaken.toggle()
                 } label: {
                     Label {
                         Text("Take Photo")
@@ -105,19 +126,26 @@ struct CameraView: View {
                         }
                     }
                 }
+                .labelStyle(.iconOnly)
+//                Button {
+//                    model.camera.switchCaptureDevice()
+//                } label: {
+//                    Label("Switch Camera", systemImage: "arrow.triangle.2.circlepath")
+//                        .font(.system(size: 36, weight: .bold))
+//                        .foregroundColor(.white)
+//                }                
                 Button {
-                    model.camera.switchCaptureDevice()
+                    model.setInitPosition()
                 } label: {
-                    Label("Switch Camera", systemImage: "arrow.triangle.2.circlepath")
-                        .font(.system(size: 36, weight: .bold))
+                    Label("初始化", systemImage: "arrow.triangle.2.circlepath")
+                        .font(.system(size: 15, weight: .bold))
                         .foregroundColor(.white)
                 }
                 
                 
             }
             .buttonStyle(.plain)
-            .labelStyle(.iconOnly)
-            .padding()
+            .padding(.bottom, 10)
             
         }
         

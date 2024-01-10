@@ -4,10 +4,11 @@ import SwiftUI
 final class DataModel: NSObject,ObservableObject {
     var camera = Camera()
     var detector = ObjectDetection()
-    private var service = Service()
+    var service = Service()
     var labeler = Labeling()
     var observations : [ProcessedObservation] = []
     var cropImages: [UIImage] = []
+    var prevImage : CIImage?
     @Published var viewfinderImage: Image?
     @Published var thumbnailImage: Image?
     
@@ -24,7 +25,6 @@ final class DataModel: NSObject,ObservableObject {
     func handleCameraPreviews() async {
         let imageStream = camera.previewStream
             .map { $0 }
-        
         for await image in imageStream {
             
             Task { @MainActor in
@@ -32,6 +32,7 @@ final class DataModel: NSObject,ObservableObject {
                     return
                 }
                 self.camera.isPreviewPaused = true
+                self.prevImage = image
                 self.observations = self.detector.detectAndProcess(image: image)
                 self.camera.isPreviewPaused = false
             }
@@ -40,25 +41,35 @@ final class DataModel: NSObject,ObservableObject {
                 if done{
                     done = false
                     let uiImage = UIImage(ciImage: image)
-                    // time sleep 1s
-                    
                     let labeledImage = self.labeler.labelImage(image: uiImage, observations: self.observations)!
                     self.viewfinderImage = Image(uiImage: labeledImage)
                     done = true
                 }
             }
             Task {
-                let uiImage = UIImage(ciImage: image)
-                var positions = [[Int]]()
-                (self.cropImages,positions) = CropPlate.CropPlates(image: uiImage, observations: self.observations)
-                if self.cropImages.count > 0{
-                    service.addPlates(images: self.cropImages, positions: positions)
+                do {
+                    if done{
+                        if service.checkPrvTime1s(){
+                            let uiImage = UIImage(ciImage: prevImage ?? image)
+                            var positions = [[Int]]()
+                            (self.cropImages,positions) = CropPlate.CropPlates(image: uiImage, observations: self.observations)
+                            if self.cropImages.count > 0{
+                                service.addPlates(images: self.cropImages, positions: positions)
+                            }
+                        }
+                    }
+                } catch {
+                    print("Error: \(error)")
                 }
             }
+
         }
     }
     
-    
+    func setInitPosition(){
+        let uiImage = UIImage(ciImage:prevImage!)
+        service.setInitPosition(image:uiImage)
+    }
     
     func savePhoto(imageData: UIImage) {
         Task {
